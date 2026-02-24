@@ -29,3 +29,17 @@ export type BoardAction =
       type: 'MOVE_TASK';
       payload: { oldColumnId: string; newColumnId: string; taskId: string };
     };
+
+export type BoardDispatch = React.Dispatch<BoardAction>;
+
+export type BoardDispatchProps = {
+  dispatch: BoardDispatch;
+}
+
+export type ColumnProps = TypeColumn & {
+  dispatch: BoardDispatch;
+}
+
+export type TaskProps = TypeTask & {
+  dispatch: BoardDispatch;
+}

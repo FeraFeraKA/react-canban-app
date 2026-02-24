@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @layer utilities {
   .writing-vertical-lr {
@@ -7,5 +7,31 @@
 
   .writing-vertical-rl {
     writing-mode: vertical-rl;
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-3xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  button {
+    @apply p-2 m-2 border-2 border-cyan-200 rounded-sm;
+  }
+
+  input {
+    @apply p-2 m-2 border-2 border-cyan-200 rounded-sm;
+  }
+
+  select {
+    @apply appearance-none p-2 m-2 border-2 border-cyan-200 rounded-sm;;
   }
 }

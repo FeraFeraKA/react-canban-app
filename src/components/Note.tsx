@@ -1,7 +1,15 @@
-import type { TypeTask } from '../types/boardTypes';
-import { formatDate } from '../utils/formatDate';
+import type { TaskProps } from "../types/boardTypes";
+import { formatDate } from "../utils/formatDate";
 
-const Note = ({ id, title, text, createdAt, updatedAt, labels }: TypeTask) => {
+const Note = ({
+  id,
+  title,
+  text,
+  createdAt,
+  updatedAt,
+  labels,
+  dispatch,
+}: TaskProps) => {
   return (
     <div className="flex flex-col p-1 border-2 border-gray-200 w-">
       <h1 className="font-bold">{title}</h1>
@@ -11,6 +19,8 @@ const Note = ({ id, title, text, createdAt, updatedAt, labels }: TypeTask) => {
           ? `Создано: ${formatDate(createdAt)}`
           : `Обновлено: ${formatDate(updatedAt)}`}
       </p>
+      <button>Удалить запись</button>
+      <button>Редактировать запись</button>
     </div>
   );
 };

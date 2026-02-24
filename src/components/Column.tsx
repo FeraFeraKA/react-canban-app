@@ -1,7 +1,7 @@
-import type { TypeColumn } from '../types/boardTypes';
-import Note from './Note';
+import type { ColumnProps } from "../types/boardTypes";
+import Note from "./Note";
 
-const Column = ({ id, title, tasks, dispatch }) => {
+const Column = ({ id, title, tasks, dispatch }: ColumnProps) => {
   return (
     <>
       <div className="flex border-2 border-gray-200">
@@ -21,6 +21,7 @@ const Column = ({ id, title, tasks, dispatch }) => {
               createdAt={task.createdAt}
               updatedAt={task.updatedAt}
               labels={task.labels}
+              dispatch={dispatch}
             />
           ))}
         </div>
