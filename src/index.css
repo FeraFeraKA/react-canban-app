@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+
+@layer utilities {
+  .writing-vertical-lr {
+    writing-mode: vertical-lr;
+  }
+
+  .writing-vertical-rl {
+    writing-mode: vertical-rl;
+  }
+}
