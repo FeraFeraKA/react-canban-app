@@ -11,10 +11,11 @@ const Column = ({ id, title, tasks, dispatch }: ColumnProps) => {
           </h3>
         </div>
 
-        <div className="flex flex-col gap-2 m-3">
+        <div className="flex flex-col flex-1 gap-2 m-3">
           {tasks.map((task) => (
             <Note
               key={task.id}
+              columnId={id}
               id={task.id}
               title={task.title}
               text={task.text}

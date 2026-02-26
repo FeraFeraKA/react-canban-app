@@ -28,7 +28,10 @@ const CreateNote = ({ dispatch }: BoardDispatchProps) => {
   };
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-4 mb-3">
+    <form
+      onSubmit={(e) => handleSubmit(e)}
+      className="flex flex-col gap-4 mb-3"
+    >
       <input
         type="text"
         value={title}

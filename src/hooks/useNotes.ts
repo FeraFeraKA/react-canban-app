@@ -38,12 +38,12 @@ const useNotes = () => {
       }
 
       case 'EDIT_TASK': {
-        const { columnId, taskId, newText } = action.payload;
+        const { columnId, taskId, newTitle, newText } = action.payload;
         const targetColumn = state.columns[columnId];
 
         const updatedTasks = targetColumn.tasks.map((task) => {
           if (task.id === taskId)
-            return { ...task, text: newText, updatedAt: Date.now() };
+            return { ...task, title: newTitle, text: newText, updatedAt: Date.now() };
           return task;
         });
 
@@ -63,6 +63,9 @@ const useNotes = () => {
         const { oldColumnId, newColumnId, taskId } = action.payload;
         const removeColumn = state.columns[oldColumnId];
         const addColumn = state.columns[newColumnId];
+
+        if (removeColumn === addColumn) return state;
+
         const targetTask = removeColumn.tasks.find(
           (task) => task.id === taskId,
         );

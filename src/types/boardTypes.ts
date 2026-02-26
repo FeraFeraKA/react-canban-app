@@ -23,7 +23,7 @@ export type BoardAction =
   | { type: 'DELETE_TASK'; payload: { columnId: string; taskId: string } }
   | {
       type: 'EDIT_TASK';
-      payload: { columnId: string; taskId: string; newText: string };
+      payload: { columnId: string; taskId: string; newTitle: string; newText: string };
     }
   | {
       type: 'MOVE_TASK';
@@ -41,5 +41,6 @@ export type ColumnProps = TypeColumn & {
 }
 
 export type TaskProps = TypeTask & {
+  columnId: string;
   dispatch: BoardDispatch;
 }
