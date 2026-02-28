@@ -1,25 +1,42 @@
-import { useState, useEffect } from "react";
-import type { TaskProps } from "../types/boardTypes";
+import { useState, useLayoutEffect, useRef } from 'react';
+import type { BoardDispatch } from '../types/boardTypes';
+
+type UseNoteHandlersParams = {
+  columnId: string;
+  id: string;
+  title: string;
+  text: string;
+  dispatch: BoardDispatch;
+};
 
 const useNoteHandlers = ({
   columnId,
   id,
   title,
   text,
-  createdAt,
-  updatedAt,
-  labels,
   dispatch,
-}: TaskProps) => {
+}: UseNoteHandlersParams) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [inputTitle, setInputTitle] = useState("");
-  const [inputText, setInputText] = useState("");
-  const [isMoving, setIsMoving] = useState(false);
-  const [moveToColumnId, setColumnId] = useState("column-1");
+  const [inputTitle, setInputTitle] = useState('');
+  const [inputText, setInputText] = useState('');
+  const [errors, setErrors] = useState('');
+
+  const refTextArea = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    if (!isEditing) return;
+    const el = refTextArea.current;
+    if (!el) return;
+
+    requestAnimationFrame(() => {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    });
+  }, [isEditing, inputText]);
 
   const handleDelete = () => {
     dispatch({
-      type: "DELETE_TASK",
+      type: 'DELETE_TASK',
       payload: {
         columnId,
         taskId: id,
@@ -35,11 +52,20 @@ const useNoteHandlers = ({
     setIsEditing((prev) => !prev);
   };
 
-  const handleSave = (e: React.SubmitEvent) => {
+  const handleSave = (e: React.SubmitEvent | React.FocusEvent) => {
     e.preventDefault();
+    setErrors('');
+
+    const trimmedTitle = inputTitle.trim();
+    const trimmedText = inputText.trim();
+
+    if (trimmedTitle.length === 0 || trimmedText.length === 0) {
+      setErrors('Task text cannot be empty. Please enter task text to save.');
+      return;
+    }
 
     dispatch({
-      type: "EDIT_TASK",
+      type: 'EDIT_TASK',
       payload: {
         columnId,
         taskId: id,
@@ -51,27 +77,6 @@ const useNoteHandlers = ({
     setIsEditing((prev) => !prev);
   };
 
-  const handleMoveForm = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    setIsMoving((prev) => !prev);
-  };
-
-  const handleMove = (e: React.SubmitEvent) => {
-    e.preventDefault();
-
-    dispatch({
-      type: "MOVE_TASK",
-      payload: {
-        oldColumnId: columnId,
-        newColumnId: moveToColumnId,
-        taskId: id,
-      },
-    });
-
-    setIsMoving((prev) => !prev);
-  };
-
   return {
     handleDelete,
     isEditing,
@@ -79,13 +84,10 @@ const useNoteHandlers = ({
     handleSave,
     setInputTitle,
     setInputText,
-    isMoving,
-    handleMoveForm,
-    handleMove,
-    setColumnId,
     inputTitle,
     inputText,
-    moveToColumnId,
+    refTextArea,
+    errors,
   };
 };
 

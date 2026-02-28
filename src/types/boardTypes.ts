@@ -23,24 +23,35 @@ export type BoardAction =
   | { type: 'DELETE_TASK'; payload: { columnId: string; taskId: string } }
   | {
       type: 'EDIT_TASK';
-      payload: { columnId: string; taskId: string; newTitle: string; newText: string };
+      payload: {
+        columnId: string;
+        taskId: string;
+        newTitle: string;
+        newText: string;
+      };
     }
   | {
       type: 'MOVE_TASK';
-      payload: { oldColumnId: string; newColumnId: string; taskId: string };
+      payload: {
+        oldColumnId: string;
+        newColumnId: string;
+        taskId: string;
+        targetTaskId?: string;
+      };
     };
 
 export type BoardDispatch = React.Dispatch<BoardAction>;
 
 export type BoardDispatchProps = {
   dispatch: BoardDispatch;
-}
+};
 
 export type ColumnProps = TypeColumn & {
   dispatch: BoardDispatch;
-}
+};
 
 export type TaskProps = TypeTask & {
   columnId: string;
+  index: number;
   dispatch: BoardDispatch;
-}
+};

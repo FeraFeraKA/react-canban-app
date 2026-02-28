@@ -1,16 +1,20 @@
-import type { TaskProps } from "../types/boardTypes";
-import { formatDate } from "../utils/formatDate";
-import useNoteHandlers from "../hooks/useNoteHandlers";
-import { useDraggable } from "@dnd-kit/react";
+import type { TaskProps } from '../types/boardTypes';
+import { formatDate } from '../utils/formatDate';
+import useNoteHandlers from '../hooks/useNoteHandlers';
+import { useSortable } from '@dnd-kit/react/sortable';
+
+import { useCopy } from '@/hooks/useCopy';
+import Editing from './Editing';
+import Buttons from './Buttons';
 
 const Note = ({
   columnId,
   id,
+  index,
   title,
   text,
   createdAt,
   updatedAt,
-  labels,
   dispatch,
 }: TaskProps) => {
   const {
@@ -20,77 +24,59 @@ const Note = ({
     handleSave,
     setInputTitle,
     setInputText,
-    isMoving,
-    handleMoveForm,
-    handleMove,
-    setColumnId,
     inputTitle,
     inputText,
-    moveToColumnId,
+    refTextArea,
+    errors,
   } = useNoteHandlers({
     columnId,
     id,
     title,
     text,
-    createdAt,
-    updatedAt,
-    labels,
     dispatch,
   });
 
-  const { ref } = useDraggable({
-    id: "draggable",
+  const { copy, isCopied } = useCopy();
+
+  const { ref } = useSortable({
+    id,
+    index,
+    type: 'item',
+    accept: 'item',
+    group: columnId,
+    plugins: [],
   });
 
   return (
-    <div className="flex flex-col p-1 border-2 border-gray-200">
-      <h1 className="font-bold">{title}</h1>
-      <p>{text}</p>
-      <p>
+    <div
+      ref={ref}
+      className="group relative flex flex-col items-center gap-1 p-2 border-2 border-gray-200 transition-all duration-200 lg:items-baseline"
+    >
+      <Editing
+        isEditing={isEditing}
+        title={title}
+        text={text}
+        handleSave={handleSave}
+        inputTitle={inputTitle}
+        setInputTitle={setInputTitle}
+        refTextArea={refTextArea}
+        inputText={inputText}
+        setInputText={setInputText}
+        errors={errors}
+      />
+      <p className="pb-12 lg:pb-0">
         {createdAt === updatedAt
           ? `Создано: ${formatDate(createdAt)}`
           : `Обновлено: ${formatDate(updatedAt)}`}
       </p>
-      <button ref={ref} onClick={handleDelete}>
-        Удалить запись
-      </button>
-      {!isEditing ? (
-        <button onClick={(e) => handleEdit(e)}>Редактировать запись</button>
-      ) : (
-        <form onSubmit={(e) => handleSave(e)} className="flex flex-col">
-          <input
-            type="text"
-            value={inputTitle}
-            onChange={(e) => setInputTitle(e.target.value)}
-            placeholder="Title..."
-          />
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Text..."
-          />
-          <button type="submit">Сохранить</button>
-          <button onClick={(e) => handleEdit(e)}>Отменить</button>
-        </form>
-      )}
-      {!isMoving ? (
-        <button onClick={(e) => handleMoveForm(e)}>Переместить запись</button>
-      ) : (
-        <form onSubmit={(e) => handleMove(e)} className="flex flex-col">
-          <span className="ml-2">Куда</span>
-          <select
-            value={moveToColumnId}
-            onChange={(e) => setColumnId(e.target.value)}
-          >
-            <option value="column-1">To-do</option>
-            <option value="column-2">In Progress</option>
-            <option value="column-3">Review</option>
-            <option value="column-4">Done</option>
-          </select>
-          <button type="submit">Переместить</button>
-        </form>
-      )}
+      <Buttons
+        handleEdit={handleEdit}
+        copy={copy}
+        title={title}
+        text={text}
+        isCopied={isCopied}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };

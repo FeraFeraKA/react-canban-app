@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer utilities {
   .writing-vertical-lr {
@@ -24,14 +24,18 @@
   }
 
   button {
-    @apply p-2 m-2 border-2 border-cyan-200 rounded-sm;
+    @apply cursor-pointer transition-all duration-200 hover:-translate-y-px;
   }
 
   input {
-    @apply p-2 m-2 border-2 border-cyan-200 rounded-sm;
+    @apply transition-transform duration-200 hover:-translate-y-px;
+  }
+
+  textarea {
+    @apply transition-transform duration-200 hover:-translate-y-px;
   }
 
   select {
-    @apply appearance-none p-2 m-2 border-2 border-cyan-200 rounded-sm;;
+    @apply transition-all duration-200 hover:-translate-y-px;
   }
 }

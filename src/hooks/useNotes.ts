@@ -42,8 +42,18 @@ const useNotes = () => {
         const targetColumn = state.columns[columnId];
 
         const updatedTasks = targetColumn.tasks.map((task) => {
-          if (task.id === taskId)
-            return { ...task, title: newTitle, text: newText, updatedAt: Date.now() };
+          if (task.id === taskId) {
+            let updatedAt = task.updatedAt;
+            if (task.title !== newTitle || task.text !== newText)
+              updatedAt = Date.now();
+
+            return {
+              ...task,
+              title: newTitle,
+              text: newText,
+              updatedAt,
+            };
+          }
           return task;
         });
 
@@ -60,29 +70,72 @@ const useNotes = () => {
       }
 
       case 'MOVE_TASK': {
-        const { oldColumnId, newColumnId, taskId } = action.payload;
-        const removeColumn = state.columns[oldColumnId];
-        const addColumn = state.columns[newColumnId];
+        const { oldColumnId, newColumnId, taskId, targetTaskId } =
+          action.payload;
+        const sourceColumn = state.columns[oldColumnId];
+        const destinationColumn = state.columns[newColumnId];
+        if (!sourceColumn || !destinationColumn) return state;
 
-        if (removeColumn === addColumn) return state;
-
-        const targetTask = removeColumn.tasks.find(
+        const sourceIndex = sourceColumn.tasks.findIndex(
           (task) => task.id === taskId,
         );
+        if (sourceIndex === -1) return state;
+        const movingTask = sourceColumn.tasks[sourceIndex];
 
-        if (!targetTask) return state;
+        if (oldColumnId === newColumnId) {
+          const reorderedTasks = [...sourceColumn.tasks];
+          reorderedTasks.splice(sourceIndex, 1);
+
+          let insertIndex = reorderedTasks.length;
+          if (targetTaskId) {
+            const targetIndex = reorderedTasks.findIndex(
+              (task) => task.id === targetTaskId,
+            );
+            if (targetIndex !== -1) insertIndex = targetIndex;
+          }
+
+          reorderedTasks.splice(insertIndex, 0, movingTask);
+          const hasChanged = reorderedTasks.some(
+            (task, index) => task.id !== sourceColumn.tasks[index]?.id,
+          );
+          if (!hasChanged) return state;
+
+          return {
+            ...state,
+            columns: {
+              ...state.columns,
+              [oldColumnId]: {
+                ...sourceColumn,
+                tasks: reorderedTasks,
+              },
+            },
+          };
+        }
+
+        const sourceTasks = sourceColumn.tasks.filter(
+          (task) => task.id !== taskId,
+        );
+        const destinationTasks = [...destinationColumn.tasks];
+        let insertIndex = destinationTasks.length;
+        if (targetTaskId) {
+          const targetIndex = destinationTasks.findIndex(
+            (task) => task.id === targetTaskId,
+          );
+          if (targetIndex !== -1) insertIndex = targetIndex;
+        }
+        destinationTasks.splice(insertIndex, 0, movingTask);
 
         return {
           ...state,
           columns: {
             ...state.columns,
             [oldColumnId]: {
-              ...removeColumn,
-              tasks: removeColumn.tasks.filter((task) => task.id !== taskId),
+              ...sourceColumn,
+              tasks: sourceTasks,
             },
             [newColumnId]: {
-              ...addColumn,
-              tasks: [...addColumn.tasks, targetTask],
+              ...destinationColumn,
+              tasks: destinationTasks,
             },
           },
         };
