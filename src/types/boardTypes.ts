@@ -31,15 +31,6 @@ export type BoardAction =
       };
     }
   | {
-      type: 'MOVE_TASK';
-      payload: {
-        oldColumnId: string;
-        newColumnId: string;
-        taskId: string;
-        targetTaskId?: string;
-      };
-    }
-  | {
       type: 'LOAD_TASKS';
       payload: {
         newState: BoardState;
