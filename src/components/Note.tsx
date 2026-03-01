@@ -50,7 +50,7 @@ const Note = ({
   return (
     <div
       ref={ref}
-      className="group relative flex flex-col items-center gap-1 p-2 border-2 border-gray-200 transition-all duration-200 lg:items-baseline"
+      className="touch-none group relative flex flex-col items-center gap-1 p-2 border-2 border-gray-200 transition-all duration-200 lg:items-baseline"
     >
       <Editing
         isEditing={isEditing}

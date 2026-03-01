@@ -11,11 +11,13 @@ const MainPage = () => {
     if (!sourceId || !targetId || sourceId === targetId) return;
 
     const oldColumnId = findColumn(boardState, sourceId);
+
     if (!oldColumnId) return;
 
     const isTargetColumn = Boolean(boardState.columns[targetId]);
     const targetTaskColumnId = findColumn(boardState, targetId);
     const newColumnId = isTargetColumn ? targetId : targetTaskColumnId;
+
     if (!newColumnId) return;
 
     const targetTaskId = isTargetColumn ? undefined : targetId;
@@ -35,15 +37,11 @@ const MainPage = () => {
     <>
       <CreateNote dispatch={dispatch} />
       <DragDropProvider
-        onDragOver={(e) => {
-          const sourceId = e.operation.source?.id.toString();
-          const targetId = e.operation.target?.id.toString();
-          moveTaskByDragIds(sourceId, targetId);
-        }}
         onDragEnd={(e) => {
           if (e.canceled) return;
           const sourceId = e.operation.source?.id.toString();
           const targetId = e.operation.target?.id.toString();
+
           moveTaskByDragIds(sourceId, targetId);
         }}
       >

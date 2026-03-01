@@ -1,5 +1,5 @@
-import { useReducer } from 'react';
-import { initialState } from '../data/mok';
+import { useEffect, useReducer } from 'react';
+import { loadStorage, saveStorage } from '@/utils/storage';
 import type { BoardState, BoardAction } from '../types/boardTypes';
 
 const useNotes = () => {
@@ -74,30 +74,41 @@ const useNotes = () => {
           action.payload;
         const sourceColumn = state.columns[oldColumnId];
         const destinationColumn = state.columns[newColumnId];
+
         if (!sourceColumn || !destinationColumn) return state;
 
         const sourceIndex = sourceColumn.tasks.findIndex(
           (task) => task.id === taskId,
         );
+
         if (sourceIndex === -1) return state;
+
         const movingTask = sourceColumn.tasks[sourceIndex];
+
+        if (!movingTask) return state;
 
         if (oldColumnId === newColumnId) {
           const reorderedTasks = [...sourceColumn.tasks];
           reorderedTasks.splice(sourceIndex, 1);
 
           let insertIndex = reorderedTasks.length;
+
           if (targetTaskId) {
             const targetIndex = reorderedTasks.findIndex(
               (task) => task.id === targetTaskId,
             );
-            if (targetIndex !== -1) insertIndex = targetIndex;
+
+            if (targetIndex !== -1) {
+              insertIndex = targetIndex;
+            }
           }
 
           reorderedTasks.splice(insertIndex, 0, movingTask);
+
           const hasChanged = reorderedTasks.some(
             (task, index) => task.id !== sourceColumn.tasks[index]?.id,
           );
+
           if (!hasChanged) return state;
 
           return {
@@ -112,17 +123,20 @@ const useNotes = () => {
           };
         }
 
-        const sourceTasks = sourceColumn.tasks.filter(
-          (task) => task.id !== taskId,
-        );
+        const sourceTasks = sourceColumn.tasks.filter((task) => task.id !== taskId);
         const destinationTasks = [...destinationColumn.tasks];
         let insertIndex = destinationTasks.length;
+
         if (targetTaskId) {
           const targetIndex = destinationTasks.findIndex(
             (task) => task.id === targetTaskId,
           );
-          if (targetIndex !== -1) insertIndex = targetIndex;
+
+          if (targetIndex !== -1) {
+            insertIndex = targetIndex;
+          }
         }
+
         destinationTasks.splice(insertIndex, 0, movingTask);
 
         return {
@@ -146,7 +160,11 @@ const useNotes = () => {
     }
   };
 
-  const [boardState, dispatch] = useReducer(changeState, initialState);
+  const [boardState, dispatch] = useReducer(changeState, null, loadStorage);
+
+  useEffect(() => {
+    saveStorage(boardState);
+  }, [boardState]);
 
   return { boardState, dispatch };
 };

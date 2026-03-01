@@ -38,6 +38,12 @@ export type BoardAction =
         taskId: string;
         targetTaskId?: string;
       };
+    }
+  | {
+      type: 'LOAD_TASKS';
+      payload: {
+        newState: BoardState;
+      };
     };
 
 export type BoardDispatch = React.Dispatch<BoardAction>;

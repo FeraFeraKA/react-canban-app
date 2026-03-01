@@ -5,6 +5,7 @@ import { useDroppable } from '@dnd-kit/react';
 const Column = ({ id, title, tasks, dispatch }: ColumnProps) => {
   const { ref } = useDroppable({
     id,
+    accept: 'item',
   });
 
   return (
